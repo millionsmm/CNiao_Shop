@@ -25,14 +25,14 @@ public class MineFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view =inflater.inflate(R.layout.fragment_home_layout,container,false);
+        view =inflater.inflate(R.layout.fragment_mine_layout,container,false);
         initView();
         return view;
     }
 
     private void initView() {
         mTitle=this.getArguments().getString("title");
-        tvTitle =(TextView) view.findViewById(R.id.home_tv_title);
+        tvTitle =(TextView) view.findViewById(R.id.mine_tv_title);
         tvTitle.setText(mTitle);
     }
 }

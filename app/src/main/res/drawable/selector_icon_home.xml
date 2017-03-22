@@ -9,5 +9,4 @@
     <!-- Pressed -->
     <item android:state_selected="true" android:state_pressed="true" android:drawable="@mipmap/icon_home_press" />
     <item android:state_pressed="true" android:drawable="@mipmap/icon_home_press" />
-
 </selector>
