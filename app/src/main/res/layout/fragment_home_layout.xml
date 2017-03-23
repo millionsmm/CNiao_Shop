@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/tools"
     android:orientation="vertical">
 
+    <!--头部Toolbar-->
     <com.liuting.cniao_shop.widget.CNiaoToolbar
         android:id="@id/toolbar"
         android:layout_width="match_parent"
@@ -12,6 +14,34 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         app:isShowSearchView="true" />
+
+    <!--滚动广告栏-->
+    <com.daimajia.slider.library.SliderLayout
+        android:id="@+id/home_slider_ad"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/large_height">
+        <com.daimajia.slider.library.Indicators.PagerIndicator
+            android:id="@+id/home_indicator_ad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            custom:selected_color="#0095BF"
+            custom:unselected_color="#55333333"
+            custom:selected_drawable="@drawable/bird"
+            custom:shape="oval"
+            custom:selected_padding_left="5dp"
+            custom:selected_padding_right="5dp"
+            custom:unselected_padding_left="5dp"
+            custom:unselected_padding_right="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            custom:selected_width="6dp"
+            custom:selected_height="6dp"
+            custom:unselected_width="6dp"
+            custom:unselected_height="6dp"
+            android:layout_marginBottom="20dp">
+        </com.daimajia.slider.library.Indicators.PagerIndicator>
+    </com.daimajia.slider.library.SliderLayout>
 
     <TextView
         android:id="@+id/home_tv_title"
