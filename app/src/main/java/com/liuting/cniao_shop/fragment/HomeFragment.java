@@ -3,6 +3,8 @@ package com.liuting.cniao_shop.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +19,10 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.liuting.cniao_shop.R;
+import com.liuting.cniao_shop.adapter.HomeCategoryAdapter;
 import com.liuting.cniao_shop.bean.BannerInfo;
+import com.liuting.cniao_shop.bean.HomeCategoryInfo;
+import com.liuting.cniao_shop.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +42,8 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private SliderLayout mSlider;//滚动布局
     private List<BannerInfo> listBanner;//滚动广告列表
     private PagerIndicator indicator;//自定义的indicator
+    private RecyclerView recyclerCategory;//商品分类
+    private HomeCategoryAdapter mAdatper;//分类Adapter
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,8 +61,36 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         getBannerData();
 
         mSlider = (SliderLayout) view.findViewById(R.id.home_slider_ad);
-        indicator =(PagerIndicator)view.findViewById(R.id.home_indicator_ad);
+        indicator = (PagerIndicator) view.findViewById(R.id.home_indicator_ad);
         initSlider();
+        initRecyclerView();
+    }
+
+    public void initRecyclerView() {
+        recyclerCategory = (RecyclerView) view.findViewById(R.id.home_recycler_category);
+        List<HomeCategoryInfo> datas = new ArrayList<>(15);
+
+        HomeCategoryInfo category = new HomeCategoryInfo("热门活动", R.drawable.img_big_1, R.drawable.img_1_small1, R.drawable.img_1_small2);
+        datas.add(category);
+
+        category = new HomeCategoryInfo("有利可图", R.drawable.img_big_4, R.drawable.img_4_small1, R.drawable.img_4_small2);
+        datas.add(category);
+        category = new HomeCategoryInfo("品牌街", R.drawable.img_big_2, R.drawable.img_2_small1, R.drawable.img_2_small2);
+        datas.add(category);
+
+        category = new HomeCategoryInfo("金融街 包赚翻", R.drawable.img_big_1, R.drawable.img_3_small1, R.drawable.imag_3_small2);
+        datas.add(category);
+
+        category = new HomeCategoryInfo("超值购", R.drawable.img_big_0, R.drawable.img_0_small1, R.drawable.img_0_small2);
+        datas.add(category);
+
+        mAdatper = new HomeCategoryAdapter(datas);
+
+        recyclerCategory.setAdapter(mAdatper);
+
+        recyclerCategory.addItemDecoration(new DividerItemDecoration());
+
+        recyclerCategory.setLayoutManager(new LinearLayoutManager(this.getActivity()));
     }
 
     /**
@@ -100,7 +135,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     @Override
     public void onSliderClick(BaseSliderView slider) {
-        Toast.makeText(getActivity(),slider.getDescription(),Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), slider.getDescription(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -112,16 +147,16 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        Log.e("TAG","pageScrolled");
+        Log.e("TAG", "pageScrolled");
     }
 
     @Override
     public void onPageSelected(int position) {
-        Log.e("TAG","pageSelected");
+        Log.e("TAG", "pageSelected");
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-        Log.e("TAG","pageScrollStateChanged");
+        Log.e("TAG", "pageScrollStateChanged");
     }
 }
