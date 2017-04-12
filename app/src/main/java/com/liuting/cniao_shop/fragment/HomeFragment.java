@@ -1,6 +1,10 @@
 package com.liuting.cniao_shop.fragment;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,14 +22,26 @@ import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.liuting.cniao_shop.R;
 import com.liuting.cniao_shop.adapter.HomeCategoryAdapter;
 import com.liuting.cniao_shop.bean.BannerInfo;
 import com.liuting.cniao_shop.bean.HomeCategoryInfo;
 import com.liuting.cniao_shop.widget.DividerItemDecoration;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Package:com.liuting.cniao_shop.fragment
@@ -44,6 +60,20 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
     private PagerIndicator indicator;//自定义的indicator
     private RecyclerView recyclerCategory;//商品分类
     private HomeCategoryAdapter mAdatper;//分类Adapter
+    private static final int INIT_SLIDER_TYPE = 0;
+    private Dialog dialog;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case INIT_SLIDER_TYPE:
+                    initSlider();
+                    dialog.dismiss();
+                    break;
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,12 +87,13 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
         mTitle = (String) this.getArguments().getSerializable("title");
         tvTitle = (TextView) view.findViewById(R.id.home_tv_title);
         tvTitle.setText(mTitle);
+        dialog = new ProgressDialog(getActivity());
 
         getBannerData();
 
         mSlider = (SliderLayout) view.findViewById(R.id.home_slider_ad);
         indicator = (PagerIndicator) view.findViewById(R.id.home_indicator_ad);
-        initSlider();
+
         initRecyclerView();
     }
 
@@ -119,18 +150,83 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
      * 获取滚动广告的数据信息
      */
     private void getBannerData() {
-        BannerInfo bannerInfo_01 = new BannerInfo();
-        bannerInfo_01.setName("音箱狂欢");
-        bannerInfo_01.setImgUrl("http://7mno4h.com2.z0.glb.qiniucdn.com/5608f3b5Nc8d90151.jpg");
-        BannerInfo bannerInfo_02 = new BannerInfo();
-        bannerInfo_02.setName("手机国庆礼");
-        bannerInfo_02.setImgUrl("http://7mno4h.com2.z0.glb.qiniucdn.com/5608eb8cN9b9a0a39.jpg");
-        BannerInfo bannerInfo_03 = new BannerInfo();
-        bannerInfo_03.setName("IT生活");
-        bannerInfo_03.setImgUrl("http://7mno4h.com2.z0.glb.qiniucdn.com/5608cae6Nbb1a39f9.jpg");
-        listBanner.add(bannerInfo_01);
-        listBanner.add(bannerInfo_02);
-        listBanner.add(bannerInfo_03);
+//        BannerInfo bannerInfo_01 = new BannerInfo();
+//        bannerInfo_01.setName("音箱狂欢");
+//        bannerInfo_01.setImgUrl("http://7mno4h.com2.z0.glb.qiniucdn.com/5608f3b5Nc8d90151.jpg");
+//        BannerInfo bannerInfo_02 = new BannerInfo();
+//        bannerInfo_02.setName("手机国庆礼");
+//        bannerInfo_02.setImgUrl("http://7mno4h.com2.z0.glb.qiniucdn.com/5608eb8cN9b9a0a39.jpg");
+//        BannerInfo bannerInfo_03 = new BannerInfo();
+//        bannerInfo_03.setName("IT生活");
+//        bannerInfo_03.setImgUrl("http://7mno4h.com2.z0.glb.qiniucdn.com/5608cae6Nbb1a39f9.jpg");
+//        listBanner.add(bannerInfo_01);
+//        listBanner.add(bannerInfo_02);
+//        listBanner.add(bannerInfo_03);
+
+        //Get 方法
+//        String url ="http://112.124.22.238:8081/course_api/banner/query?type=1";
+//        OkHttpClient client = new OkHttpClient();
+//        Request request = new Request.Builder()
+//                .url(url)
+//                .build();
+//        Call call = client.newCall(request);
+//        call.enqueue(new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                Toast.makeText(getActivity(),e.getMessage().toString(),Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                if(response.isSuccessful()){
+//                    Type type = new TypeToken<List<BannerInfo>>(){}.getType();
+//                    Gson gson = new Gson();
+//                    List<BannerInfo> list= gson.fromJson(response.body().string(),type);
+//                    for (BannerInfo bannerInfo:list)
+//                    {
+//                        listBanner.add(bannerInfo);
+//                    }
+//                    handler.sendEmptyMessage(INIT_SLIDER_TYPE);
+//                }else {
+//                    Toast.makeText(getActivity(),"IOException",Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+        dialog.show();
+        String url ="http://112.124.22.238:8081/course_api/banner/query";
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("type","1")
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                dialog.dismiss();
+                Toast.makeText(getActivity(),e.getMessage().toString(),Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.isSuccessful()){
+                    Type type = new TypeToken<List<BannerInfo>>(){}.getType();
+                    Gson gson = new Gson();
+                    List<BannerInfo> list= gson.fromJson(response.body().string(),type);
+                    for (BannerInfo bannerInfo:list)
+                    {
+                        listBanner.add(bannerInfo);
+                    }
+                    handler.sendEmptyMessage(INIT_SLIDER_TYPE);
+                }else {
+                    dialog.dismiss();
+                    Toast.makeText(getActivity(),"IOException",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override

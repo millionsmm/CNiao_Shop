@@ -10,6 +10,7 @@ package com.liuting.cniao_shop.bean;
 public class BannerInfo {
     private String name;//名称
     private String imgUrl;//图片URL
+    private  String id;//描述
 
     public String getName() {
         return name;
@@ -25,5 +26,13 @@ public class BannerInfo {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
